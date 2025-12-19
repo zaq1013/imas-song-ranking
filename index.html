@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IDOL Song Ranking Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --color-as: rgba(226, 43, 48, 0.2);
+            --color-cg: rgba(38, 129, 200, 0.2);
+            --color-ml: rgba(255, 195, 11, 0.2);
+            --color-sidem: rgba(0, 167, 162, 0.2);
+            --color-sc: rgba(86, 194, 238, 0.2);
+            --color-gm: rgba(255, 126, 28, 0.2);
+            --bg-color: #f0f2f5;
+            --border-main: #222;
+        }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#d1d9e6 1px, transparent 1px);
+            background-size: 20px 20px;
+            margin: 0;
+            padding: 20px 10px;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+
+        .main-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-section { text-align: center; margin-bottom: 25px; }
+        .header-section h1 { font-size: 28px; font-weight: 900; margin: 0; text-transform: uppercase; }
+
+        /* 輸入與按鈕區域：手機版垂直排列，桌機版橫向排列 */
+        .top-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .producer-box {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .producer-box input {
+            border: none; border-bottom: 2px solid #eee;
+            padding: 5px; font-size: 16px; outline: none; width: 140px;
+        }
+
+        .download-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 14px;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        /* 表格容器 */
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* 關鍵：讓手機可以左右滑動 */
+            background: #fff;
+            padding: 5px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #capture-area {
+            background: white;
+            padding: 20px;
+            min-width: 950px; /* 確保截圖時寬度固定 */
+        }
+
+        .idol-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            border: 3px solid var(--border-main);
+        }
+
+        .idol-table thead th {
+            height: 120px;
+            border: 1px solid var(--border-main);
+            background: #fff;
+            padding: 10px;
+        }
+
+        .idol-table thead img { width: 70px; height: 70px; object-fit: contain; }
+
+        /* 系列色背景 */
+        .th-as { background-color: var(--color-as) !important; }
+        .th-cg { background-color: var(--color-cg) !important; }
+        .th-ml { background-color: var(--color-ml) !important; }
+        .th-sidem { background-color: var(--color-sidem) !important; }
+        .th-sc { background-color: var(--color-sc) !important; }
+        .th-gm { background-color: var(--color-gm) !important; }
+
+        /* 在你的 <style> 中找到 .idol-table td 並加入 line-height */
+.idol-table td {
+    height: 110px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    /* 核心修正：將 line-height 設為與高度接近，確保游標垂直置中 */
+    line-height: 86px; 
+    vertical-align: middle;
+    text-align: center;
+    cursor: text;
+    outline: none;
+    transition: 0.2s;
+    word-break: break-all;
+
+}
+.col-as { 
+    background-color: rgba(226, 43, 48, 0.03); 
+    color: #333; /* 深色字體保持可讀性 */
+}
+.col-as:not(:empty) { text-shadow: 0 0 8px rgba(226, 43, 48, 0.4); }
+
+.col-cg { 
+    background-color: rgba(38, 129, 200, 0.03); 
+}
+.col-cg:not(:empty) { text-shadow: 0 0 8px rgba(38, 129, 200, 0.4); }
+
+.col-ml { 
+    background-color: rgba(255, 195, 11, 0.03); 
+}
+.col-ml:not(:empty) { text-shadow: 0 0 8px rgba(255, 195, 11, 0.6); } /* 黃色較淡，陰影加深一點 */
+
+.col-sidem { 
+    background-color: rgba(0, 167, 162, 0.03); 
+}
+.col-sidem:not(:empty) { text-shadow: 0 0 8px rgba(0, 167, 162, 0.4); }
+
+.col-sc { 
+    background-color: rgba(86, 194, 238, 0.03); 
+}
+.col-sc:not(:empty) { text-shadow: 0 0 8px rgba(86, 194, 238, 0.5); }
+
+.col-gm { 
+    background-color: rgba(255, 126, 28, 0.03); 
+}
+.col-gm:not(:empty) { text-shadow: 0 0 8px rgba(255, 126, 28, 0.5); }
+
+/* 當格子被選中 (Focus) 時，暫時移除陰影以便清楚修改 */
+.idol-table td:focus {
+    background-color: #fff !important;
+    text-shadow: none !important;
+    border: 2px solid #222;
+}
+        .capture-footer {
+            margin-top: 15px; display: none;
+            justify-content: space-between; align-items: center;
+            border-top: 1px solid #eee; padding-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .header-section h1 { font-size: 20px; }
+            .producer-box { width: 100%; justify-content: center; }
+            .download-btn { width: 100%; border-radius: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header-section">
+        <h1>Idolmaster Songs Ranking</h1>
+    </div>
+
+    <div class="top-controls">
+        <div class="producer-box">
+            <label>PRODUCER</label>
+            <input type="text" id="username" placeholder="請輸入姓名">
+        </div>
+        <button class="download-btn" onclick="generateImage()">SAVE AS IMAGE</button>
+    </div>
+
+    <div style="color: #999; font-size: 12px; margin-bottom: 5px;">⬅ 左右滑動表格填寫 ➡</div>
+    
+    <div class="table-container">
+        <div id="capture-area">
+            <table class="idol-table">
+                <thead>
+                    <tr>
+                        <th class="th-as"><img src="as.png" alt="AS"></th>
+                        <th class="th-cg"><img src="cg.png" alt="CG"></th>
+                        <th class="th-ml"><img src="ml.png" alt="ML"></th>
+                        <th class="th-sidem"><img src="sidem.png" alt="SideM"></th>
+                        <th class="th-sc"><img src="sc.png" alt="SC"></th>
+                        <th class="th-gm"><img src="gm.png" alt="GM"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+            <div class="capture-footer" id="c-footer">
+                <div id="p-name-out" style="font-weight: bold;"></div>
+                <div style="color: #ccc; font-weight: 900;">IDOLMASTER RANKING</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 替換原本的 初始化表格 區塊
+const classes = ['col-as', 'col-cg', 'col-ml', 'col-sidem', 'col-sc', 'col-gm'];
+const tbody = document.getElementById('table-body');
+
+for (let i = 0; i < 5; i++) {
+    const tr = document.createElement('tr');
+    for (let j = 0; j < 6; j++) {
+        const td = document.createElement('td');
+        td.contentEditable = "true";
+        td.className = classes[j];
+        // 核心修正：確保格子內容初始化為絕對空值，避免游標偏移
+        td.innerText = ""; 
+        tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+}
+
+    function generateImage() {
+        const btn = document.querySelector('.download-btn');
+        const username = document.getElementById('username').value;
+        const footer = document.getElementById('c-footer');
+        const pDisplay = document.getElementById('p-name-out');
+
+        btn.innerText = "Processing...";
+        if(username) {
+            pDisplay.innerText = "Producer: " + username;
+            footer.style.display = "flex";
+        }
+
+        html2canvas(document.getElementById('capture-area'), {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = (username || 'idol') + '_ranking.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            btn.innerText = "SAVE AS IMAGE";
+            footer.style.display = "none";
+        });
+    }
+</script>
+</body>
+</html>
