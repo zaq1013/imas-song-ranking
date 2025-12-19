@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IDOL Song Ranking Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;900&display=swap" rel="stylesheet">
+    <title>Im@s Songs Ranking Generator</title>
+    
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;900&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -18,7 +24,10 @@
             --border-main: #222;
         }
 
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
         body {
             background-color: var(--bg-color);
@@ -37,10 +46,18 @@
             align-items: center;
         }
 
-        .header-section { text-align: center; margin-bottom: 25px; }
-        .header-section h1 { font-size: 28px; font-weight: 900; margin: 0; text-transform: uppercase; }
+        .header-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-        /* 輸入與按鈕區域：手機版垂直排列，桌機版橫向排列 */
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
         .top-controls {
             display: flex;
             flex-wrap: wrap;
@@ -55,7 +72,7 @@
             background: white;
             padding: 12px 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -63,8 +80,12 @@
         }
 
         .producer-box input {
-            border: none; border-bottom: 2px solid #eee;
-            padding: 5px; font-size: 16px; outline: none; width: 140px;
+            border: none;
+            border-bottom: 2px solid #eee;
+            padding: 5px;
+            font-size: 16px;
+            outline: none;
+            width: 140px;
         }
 
         .download-btn {
@@ -80,21 +101,20 @@
             white-space: nowrap;
         }
 
-        /* 表格容器 */
         .table-container {
             width: 100%;
-            overflow-x: auto; /* 關鍵：讓手機可以左右滑動 */
+            overflow-x: auto;
             background: #fff;
             padding: 5px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             -webkit-overflow-scrolling: touch;
         }
 
         #capture-area {
             background: white;
-            padding: 20px;
-            min-width: 950px; /* 確保截圖時寬度固定 */
+            padding: 25px;
+            min-width: 950px;
         }
 
         .idol-table {
@@ -112,9 +132,13 @@
             padding: 10px;
         }
 
-        .idol-table thead img { width: 70px; height: 70px; object-fit: contain; }
+        .idol-table thead img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
 
-        /* 系列色背景 */
+        /* 各系列表頭色 */
         .th-as { background-color: var(--color-as) !important; }
         .th-cg { background-color: var(--color-cg) !important; }
         .th-ml { background-color: var(--color-ml) !important; }
@@ -122,64 +146,49 @@
         .th-sc { background-color: var(--color-sc) !important; }
         .th-gm { background-color: var(--color-gm) !important; }
 
-        /* 在你的 <style> 中找到 .idol-table td 並加入 line-height */
-.idol-table td {
-    height: 110px;
-    border: 1px solid #ccc;
-    padding: 6px;
-    font-size: 16px;
-    font-weight: 700;
-    /* 核心修正：將 line-height 設為與高度接近，確保游標垂直置中 */
-    line-height: 86px; 
-    vertical-align: middle;
-    text-align: center;
-    cursor: text;
-    outline: none;
-    transition: 0.2s;
-    word-break: break-all;
+        .idol-table td {
+            height: 110px;
+            border: 1px solid #ccc;
+            padding: 12px; /* 增加一點 padding */
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.2;
+            vertical-align: middle; /* 核心垂直居中設定 */
+            text-align: center;
+            cursor: text;
+            outline: none;
+            word-break: break-all;
+            background-color: #fff;
+        }
 
-}
-.col-as { 
-    background-color: rgba(226, 43, 48, 0.03); 
-    color: #333; /* 深色字體保持可讀性 */
-}
-.col-as:not(:empty) { text-shadow: 0 0 8px rgba(226, 43, 48, 0.4); }
+        /* 文字陰影與系列背景微調 */
+        .col-as:not(:empty) { text-shadow: 0 0 8px rgba(226, 43, 48, 0.4); background-color: rgba(226, 43, 48, 0.02); }
+        .col-cg:not(:empty) { text-shadow: 0 0 8px rgba(38, 129, 200, 0.4); background-color: rgba(38, 129, 200, 0.02); }
+        .col-ml:not(:empty) { text-shadow: 0 0 8px rgba(255, 195, 11, 0.6); background-color: rgba(255, 195, 11, 0.02); }
+        .col-sidem:not(:empty) { text-shadow: 0 0 8px rgba(0, 167, 162, 0.4); background-color: rgba(0, 167, 162, 0.02); }
+        .col-sc:not(:empty) { text-shadow: 0 0 8px rgba(86, 194, 238, 0.5); background-color: rgba(86, 194, 238, 0.02); }
+        .col-gm:not(:empty) { text-shadow: 0 0 8px rgba(255, 126, 28, 0.5); background-color: rgba(255, 126, 28, 0.02); }
 
-.col-cg { 
-    background-color: rgba(38, 129, 200, 0.03); 
-}
-.col-cg:not(:empty) { text-shadow: 0 0 8px rgba(38, 129, 200, 0.4); }
+        .idol-table td:focus {
+            background-color: #fff !important;
+            text-shadow: none !important;
+            border: 2px solid #222;
+        }
 
-.col-ml { 
-    background-color: rgba(255, 195, 11, 0.03); 
-}
-.col-ml:not(:empty) { text-shadow: 0 0 8px rgba(255, 195, 11, 0.6); } /* 黃色較淡，陰影加深一點 */
-
-.col-sidem { 
-    background-color: rgba(0, 167, 162, 0.03); 
-}
-.col-sidem:not(:empty) { text-shadow: 0 0 8px rgba(0, 167, 162, 0.4); }
-
-.col-sc { 
-    background-color: rgba(86, 194, 238, 0.03); 
-}
-.col-sc:not(:empty) { text-shadow: 0 0 8px rgba(86, 194, 238, 0.5); }
-
-.col-gm { 
-    background-color: rgba(255, 126, 28, 0.03); 
-}
-.col-gm:not(:empty) { text-shadow: 0 0 8px rgba(255, 126, 28, 0.5); }
-
-/* 當格子被選中 (Focus) 時，暫時移除陰影以便清楚修改 */
-.idol-table td:focus {
-    background-color: #fff !important;
-    text-shadow: none !important;
-    border: 2px solid #222;
-}
         .capture-footer {
-            margin-top: 15px; display: none;
-            justify-content: space-between; align-items: center;
-            border-top: 1px solid #eee; padding-top: 10px;
+            margin-top: 15px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+            padding-top: 12px;
+        }
+
+        /* 加大 Producer 名字 */
+        #p-name-out {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1a1a1a;
         }
 
         @media (max-width: 600px) {
@@ -189,89 +198,98 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="main-wrapper">
-    <div class="header-section">
-        <h1>Idolmaster Songs Ranking</h1>
-    </div>
-
-    <div class="top-controls">
-        <div class="producer-box">
-            <label>PRODUCER</label>
-            <input type="text" id="username" placeholder="請輸入姓名">
+    <div class="main-wrapper">
+        <div class="header-section">
+            <h1>Idolm@ster Songs Ranking</h1>
         </div>
-        <button class="download-btn" onclick="generateImage()">SAVE AS IMAGE</button>
-    </div>
 
-    <div style="color: #999; font-size: 12px; margin-bottom: 5px;">⬅ 左右滑動表格填寫 ➡</div>
-    
-    <div class="table-container">
-        <div id="capture-area">
-            <table class="idol-table">
-                <thead>
-                    <tr>
-                        <th class="th-as"><img src="as.png" alt="AS"></th>
-                        <th class="th-cg"><img src="cg.png" alt="CG"></th>
-                        <th class="th-ml"><img src="ml.png" alt="ML"></th>
-                        <th class="th-sidem"><img src="sidem.png" alt="SideM"></th>
-                        <th class="th-sc"><img src="sc.png" alt="SC"></th>
-                        <th class="th-gm"><img src="gm.png" alt="GM"></th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-            <div class="capture-footer" id="c-footer">
-                <div id="p-name-out" style="font-weight: bold;"></div>
-                <div style="color: #ccc; font-weight: 900;">IDOLMASTER RANKING</div>
+        <div class="top-controls">
+            <div class="producer-box">
+                <label>PRODUCER</label>
+                <input type="text" id="username" placeholder="請輸入姓名">
+            </div>
+            <button class="download-btn" onclick="generateImage()">SAVE AS IMAGE</button>
+        </div>
+
+        <div style="color: #999; font-size: 12px; margin-bottom: 5px;">⬅ 左右滑動表格填寫 ➡</div>
+
+        <div class="table-container">
+            <div id="capture-area">
+                <table class="idol-table">
+                    <thead>
+                        <tr>
+                            <th class="th-as"><img src="as.png" alt="AS"></th>
+                            <th class="th-cg"><img src="cg.png" alt="CG"></th>
+                            <th class="th-ml"><img src="ml.png" alt="ML"></th>
+                            <th class="th-sidem"><img src="sidem.png" alt="SideM"></th>
+                            <th class="th-sc"><img src="sc.png" alt="SC"></th>
+                            <th class="th-gm"><img src="gm.png" alt="GM"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+                <div class="capture-footer" id="c-footer">
+                    <div id="p-name-out"></div>
+                    <div style="color: #ccc; font-weight: 900; letter-spacing: 1px;">IDOLM@STER SONGS RANKING</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-// 替換原本的 初始化表格 區塊
-const classes = ['col-as', 'col-cg', 'col-ml', 'col-sidem', 'col-sc', 'col-gm'];
-const tbody = document.getElementById('table-body');
+    <script>
+        const classes = ['col-as', 'col-cg', 'col-ml', 'col-sidem', 'col-sc', 'col-gm'];
+        const tbody = document.getElementById('table-body');
 
-for (let i = 0; i < 5; i++) {
-    const tr = document.createElement('tr');
-    for (let j = 0; j < 6; j++) {
-        const td = document.createElement('td');
-        td.contentEditable = "true";
-        td.className = classes[j];
-        // 核心修正：確保格子內容初始化為絕對空值，避免游標偏移
-        td.innerText = ""; 
-        tr.appendChild(td);
-    }
-    tbody.appendChild(tr);
-}
-
-    function generateImage() {
-        const btn = document.querySelector('.download-btn');
-        const username = document.getElementById('username').value;
-        const footer = document.getElementById('c-footer');
-        const pDisplay = document.getElementById('p-name-out');
-
-        btn.innerText = "Processing...";
-        if(username) {
-            pDisplay.innerText = "Producer: " + username;
-            footer.style.display = "flex";
+        for (let i = 0; i < 5; i++) {
+            const tr = document.createElement('tr');
+            for (let j = 0; j < 6; j++) {
+                const td = document.createElement('td');
+                td.contentEditable = "true";
+                td.className = classes[j];
+                // 核心修正：使用零寬度空格 (\u200B) 讓瀏覽器初始化時就認定格子有內容，解決游標跳到頂部的問題
+                td.innerText = "\u200B"; 
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
         }
 
-        html2canvas(document.getElementById('capture-area'), {
-            scale: 2,
-            backgroundColor: "#ffffff",
-            useCORS: true
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = (username || 'idol') + '_ranking.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            btn.innerText = "SAVE AS IMAGE";
-            footer.style.display = "none";
-        });
-    }
-</script>
+        function generateImage() {
+            const btn = document.querySelector('.download-btn');
+            const username = document.getElementById('username').value;
+            const footer = document.getElementById('c-footer');
+            const pDisplay = document.getElementById('p-name-out');
+            const captureArea = document.getElementById('capture-area');
+
+            btn.innerText = "GENERATING...";
+
+            if (username) {
+                pDisplay.innerText = "Producer: " + username;
+            } else {
+                pDisplay.innerText = "Producer: Anonymous";
+            }
+            footer.style.display = "flex";
+
+            // 維持 1000px 寬度擷取，防止圖片拉長
+            html2canvas(captureArea, {
+                scale: 2,
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                width: 1000, 
+                windowWidth: 1000 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Ranking_${username || 'IDOL'}.png`;
+                link.href = canvas.toDataURL('image/png', 0.9);
+                link.click();
+
+                btn.innerText = "SAVE AS IMAGE";
+                footer.style.display = "none";
+            });
+        }
+    </script>
 </body>
+
 </html>
