@@ -272,20 +272,33 @@
             }
             footer.style.display = "flex";
 
-            // 維持 1000px 寬度擷取，防止圖片拉長
             html2canvas(captureArea, {
                 scale: 2,
                 backgroundColor: "#ffffff",
                 useCORS: true,
-                width: 1000, 
-                windowWidth: 1000 
+                width: 1000,
+                windowWidth: 1000
             }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Ranking_${username || 'IDOL'}.png`;
-                link.href = canvas.toDataURL('image/png', 0.9);
-                link.click();
+                const imgData = canvas.toDataURL('image/png');
+                
+                // 判斷是否為行動裝置 (簡單判斷)
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-                btn.innerText = "SAVE AS IMAGE";
+                if (isMobile) {
+                    // 行動裝置：開啟新視窗顯示圖片，方便長按儲存
+                    const newWindow = window.open();
+                    newWindow.document.write(`<img src="${imgData}" style="width:100%;" />`);
+                    newWindow.document.write('<p style="text-align:center;font-family:sans-serif;">長按上方圖片即可儲存至相簿</p>');
+                    btn.innerText = "DONE!";
+                } else {
+                    // 桌機版：維持原本的自動下載機制
+                    const link = document.createElement('a');
+                    link.download = `Ranking_${username || 'IDOL'}.png`;
+                    link.href = imgData;
+                    link.click();
+                    btn.innerText = "SAVE AS IMAGE";
+                }
+                
                 footer.style.display = "none";
             });
         }
